@@ -1,9 +1,6 @@
 (() => {
   const setupRaw = localStorage.getItem('ludo-setup');
-  if (!setupRaw) {
-    window.location.href = 'index.html';
-    return;
-  }
+  if (!setupRaw) { window.location.href = 'index.html'; return; }
   const setup = JSON.parse(setupRaw);
   const statusLine = document.getElementById('statusLine');
   const turnBanner = document.getElementById('turnBanner');
@@ -11,64 +8,33 @@
   const diceEl = document.getElementById('dice');
   const rollBtn = document.getElementById('rollBtn');
 
-  const engine = new GameEngine(setup.players.length, setup.players, setup.board);
-  const aiManager = new AIManager();
-  let validTokenIndex = -1;
-
-  function setStatus(msg) {
-    statusLine.textContent = msg;
+  const engine = new GameEngine(setup.players.length, setup.players.map((p, i) => ({ ...p, id: `player-${i}` })));
+  for (const p of engine.players) {
+    p.tokens = (p.tokens || []).map((t, idx) => ({ ...t, color: p.color, owner: p.name, homeIndex: idx }));
   }
 
+  const aiManager = new AIManager();
+  let validTokenIndex = -1;
+  let board = buildBoard(setup.board);
+  const players = engine.players.map((p, i) => ({
+    ...p,
+    tokens: [0,1,2,3].map(n => ({ id: `${p.color}-${n}`, color: p.color, status: 'yard', pathIndex: null, r: null, c: null, homeColumnIndex: null, homeIndex: n }))
+  }));
+  engine.players = players;
+
+  function setStatus(msg) { statusLine.textContent = msg; }
   function setTurn() {
     const p = engine.players[engine.currentPlayer];
     turnBanner.innerHTML = `<span class="turn-dot" style="background:${p.color}"></span> ${p.name}`;
   }
 
-  function renderBoard() {
-    boardWrap.innerHTML = '';
-    const board = document.createElement('div');
-    board.className = `board ${setup.board === 'hex' ? 'hex' : 'classic'}`;
-    board.style.setProperty('--size', setup.board === 'hex' ? '15' : '15');
-    const size = setup.board === 'hex' ? 15 : 15;
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.r = r;
-        cell.dataset.c = c;
-        board.appendChild(cell);
-      }
-    }
-    boardWrap.appendChild(board);
-  }
-
-  function cellFor(r, c) {
-    return boardWrap.querySelector(`.cell[data-r='${r}'][data-c='${c}']`);
-  }
-
-  function placeTokens() {
-    document.querySelectorAll('.token').forEach((n) => n.remove());
-    engine.players.forEach((p) => {
-      (p.tokens || []).forEach((token) => {
-        if (token.status === 'yard' || token.status === 'finished') return;
-        const cell = cellFor(token.r, token.c);
-        if (!cell) return;
-        const el = document.createElement('div');
-        el.className = `token ${token.color}`;
-        el.textContent = '●';
-        el.title = `${p.name}`;
-        cell.appendChild(el);
-      });
-    });
-  }
-
-  function finishTurnForCurrent(extra) {
-    const p = engine.players[engine.currentPlayer];
-    engine.finishTurn(p, !!extra);
+  function refreshBoard() {
+    render(board, boardWrap);
+    placeTokens(board, engine.players);
   }
 
   function afterMove() {
-    placeTokens();
+    placeTokens(board, engine.players);
     if (engine.checkWinCondition(engine.players[engine.currentPlayer])) {
       setStatus(`${engine.players[engine.currentPlayer].name} wins!`);
       rollBtn.disabled = true;
@@ -90,11 +56,7 @@
 
   function autoTurn() {
     const p = engine.players[engine.currentPlayer];
-    if (!p.isBot) {
-      rollBtn.disabled = false;
-      setStatus('Roll dice');
-      return;
-    }
+    if (!p.isBot) { rollBtn.disabled = false; setStatus('Roll dice'); return; }
     const dice = Math.floor(Math.random() * 6) + 1;
     engine.diceValue = dice;
     engine.turnPhase = 'move';
@@ -102,11 +64,7 @@
     setStatus(`${p.name} rolled ${dice}`);
     setTimeout(() => {
       const choice = aiManager.pick('medium', engine.getState());
-      if (choice < 0) {
-        finishTurnForCurrent(false);
-        afterMove();
-        return;
-      }
+      if (choice < 0) { engine.finishTurn(p, false); afterMove(); return; }
       engine.moveToken(p, choice);
       afterMove();
     }, 700);
@@ -122,10 +80,7 @@
     const movable = (p.tokens || []).findIndex((t) => t.status === 'onTrack' || t.status === 'homeColumn');
     if (movable < 0) {
       setStatus('No moves, skipping');
-      setTimeout(() => {
-        finishTurnForCurrent(false);
-        afterMove();
-      }, 600);
+      setTimeout(() => { engine.finishTurn(p, false); afterMove(); }, 600);
     } else {
       validTokenIndex = movable;
       setStatus('Click a token to move');
@@ -146,7 +101,8 @@
     validTokenIndex = -1;
     rollBtn.disabled = false;
     diceEl.textContent = '-';
-    renderBoard();
+    board = buildBoard(setup.board);
+    refreshBoard();
     setTurn();
     setStatus('Roll to start');
   });
@@ -155,25 +111,7 @@
     window.location.href = 'index.html';
   });
 
-  function renderBoard() {
-    boardWrap.innerHTML = '';
-    const board = document.createElement('div');
-    board.className = `board ${setup.board === 'hex' ? 'hex' : ''}`;
-    board.style.setProperty('--size', setup.board === 'hex' ? '11' : '15');
-    const size = setup.board === 'hex' ? 11 : 15;
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.r = r;
-        cell.dataset.c = c;
-        board.appendChild(cell);
-      }
-    }
-    boardWrap.appendChild(board);
-  }
-
-  renderBoard();
+  refreshBoard();
   setTurn();
   setStatus('Roll to start');
 })();

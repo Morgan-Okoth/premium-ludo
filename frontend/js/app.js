@@ -5,7 +5,7 @@
   const startBtn = document.getElementById('startBtn');
 
   const classicColors = ['red', 'green', 'yellow', 'blue'];
-  const hexColors = ['red', 'green', 'yellow', 'blue', 'violet', 'teal'];
+  const hexColors = ['red', 'green', 'yellow', 'blue', 'orange', 'purple'];
 
   function renderSlots() {
     const count = Number(countSel.value);
@@ -52,8 +52,7 @@
       return;
     }
 
-    const totalTarget = 6;
-    while (players.length < totalTarget) {
+    while (players.length < 6) {
       players.push({
         name: `Bot ${players.length + 1}`,
         color: palette[players.length],
