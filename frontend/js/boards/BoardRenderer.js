@@ -85,19 +85,19 @@ function buildHexBoard() {
   return { cells, size, center };
 }
 
-export function buildBoard(type) {
+window.buildBoard = function(type) {
   if (type === 'hex') return buildHexBoard();
   return { cells: buildClassicBoard(), type: 'classic', size: 15 };
-}
+};
 
-export function render(board, container) {
+window.renderBoard = function(board, container) {
   container.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'board-host';
   if (board.type === 'hex') renderHex(board, wrap);
   else renderClassic(board, wrap);
   container.appendChild(wrap);
-}
+};
 
 function renderClassic(board, wrap) {
   const boardEl = document.createElement('div');
@@ -153,7 +153,7 @@ function renderHex(board, wrap) {
   wrap.appendChild(boardEl);
 }
 
-export function placeTokens(board, players) {
+window.placeTokens = function(board, players) {
   document.querySelectorAll('.token').forEach(n => n.remove());
   players.forEach(player => {
     (player.tokens || []).forEach(token => {
@@ -169,11 +169,9 @@ export function placeTokens(board, players) {
       cell.appendChild(el);
     });
   });
-}
+};
 
-export function refreshBoard(container, board, players) {
-  render(board, container);
-  placeTokens(board, players);
-}
-
-if (typeof module !== 'undefined' && module.exports) module.exports = { buildBoard, render, placeTokens, refreshBoard };
+window.refreshBoard = function(container, board, players) {
+  window.renderBoard(board, container);
+  window.placeTokens(board, players);
+};

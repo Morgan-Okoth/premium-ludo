@@ -1,4 +1,4 @@
-const MO = typeof window !== 'undefined' && window.__morganOrbit ? window.__morganOrbit : { start(){}, stop(){} };
+const MO = window.MorganOrbit || { start(){}, stop(){} };
 
-export function startOrbit(){ MO.start && MO.start(); }
-export function stopOrbit(){ MO.stop && MO.stop(); }
+window.startOrbit = function() { MO.start && MO.start(); };
+window.stopOrbit = function() { MO.stop && MO.stop(); };

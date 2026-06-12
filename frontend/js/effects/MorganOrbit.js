@@ -73,4 +73,4 @@ function start() {
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 100));
 
-export default { start, stop };
+window.MorganOrbit = { start, stop };

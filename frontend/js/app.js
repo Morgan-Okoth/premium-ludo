@@ -62,7 +62,7 @@
 
     const setup = {
       players,
-      board: players.length <= 4 ? 'classic' : 'hex',
+      board: count <= 4 ? 'classic' : 'hex',
       mode,
     };
 
