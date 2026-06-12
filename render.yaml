@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: premium-ludo-backend
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm ci
+    startCommand: cd backend && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: FRONTEND_URL
+        value: https://premium-ludo.netlify.app
+      - key: MONGODB_URI
+        value: mongodb+srv://user:pass@cluster.mongodb.net/premium-ludo
+      - key: JWT_SECRET
+        generateValue: true
