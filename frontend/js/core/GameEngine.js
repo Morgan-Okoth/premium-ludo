@@ -33,6 +33,11 @@ class GameEngine {
   }
 
   generatePath(color) {
+    if (this.mode === 'hex') {
+      const hexTrack = this.generateHexTrack(color);
+      return hexTrack;
+    }
+
     const track = {
       red: [
         { r: 6, c: 0 }, { r: 6, c: 1 },
@@ -97,6 +102,37 @@ class GameEngine {
 
     const base = track.red;
     return base.map((p) => ({ ...p }));
+  }
+
+  generateHexTrack(color) {
+    const starts = {
+      red:    { r: 5, c: 0 },
+      orange: { r: 0, c: 5 },
+      yellow: { r: 5, c: 10 },
+      green:  { r: 10, c: 5 },
+      blue:   { r: 10, c: 5 },
+      purple: { r: 5, c: 0 },
+    };
+    const start = starts[color] || starts.red;
+    const ring = this.generateClassicTrack();
+    const idx = ring.findIndex((p) => p.r === start.r && p.c === start.c);
+    const out = [];
+    for (let i = 0; i < ring.length; i++) out.push({ ...ring[(idx + i) % ring.length] });
+    return out;
+  }
+
+  generateClassicTrack() {
+    return [
+      { r: 6, c: 0 }, { r: 6, c: 1 },
+      { r: 5, c: 1 }, { r: 4, c: 1 }, { r: 3, c: 1 }, { r: 2, c: 1 }, { r: 1, c: 1 },
+      { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 6 },
+      { r: 0, c: 6 }, { r: 0, c: 7 }, { r: 0, c: 8 }, { r: 1, c: 8 }, { r: 2, c: 8 }, { r: 3, c: 8 }, { r: 4, c: 8 }, { r: 5, c: 8 }, { r: 6, c: 8 },
+      { r: 6, c: 9 }, { r: 6, c: 10 }, { r: 6, c: 11 }, { r: 6, c: 12 }, { r: 6, c: 13 },
+      { r: 7, c: 13 }, { r: 8, c: 13 }, { r: 8, c: 12 }, { r: 8, c: 11 }, { r: 8, c: 10 }, { r: 8, c: 9 }, { r: 8, c: 8 },
+      { r: 9, c: 8 }, { r: 10, c: 8 }, { r: 11, c: 8 }, { r: 12, c: 8 }, { r: 13, c: 8 },
+      { r: 13, c: 7 }, { r: 14, c: 7 }, { r: 14, c: 6 }, { r: 13, c: 6 }, { r: 12, c: 6 }, { r: 11, c: 6 }, { r: 10, c: 6 }, { r: 9, c: 6 }, { r: 8, c: 6 },
+      { r: 8, c: 5 }, { r: 8, c: 4 }, { r: 8, c: 3 }, { r: 8, c: 2 }, { r: 8, c: 1 }, { r: 7, c: 1 }, { r: 6, c: 1 },
+    ];
   }
 
   generateHomeColumn(color) {
