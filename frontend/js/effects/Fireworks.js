@@ -8,7 +8,4 @@ class Fireworks {
     setTimeout(() => el.remove(), 1200);
   }
 }
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Fireworks;
-}
+window.Fireworks = Fireworks;

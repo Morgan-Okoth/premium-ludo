@@ -5,7 +5,4 @@ class DiceAnimation {
     setTimeout(() => el.classList.remove('rolling'), 700);
   }
 }
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = DiceAnimation;
-}
+window.DiceAnimation = DiceAnimation;

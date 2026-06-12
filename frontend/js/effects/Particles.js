@@ -8,7 +8,4 @@ class Particles {
     setTimeout(() => el.remove(), 900);
   }
 }
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Particles;
-}
+window.Particles = Particles;

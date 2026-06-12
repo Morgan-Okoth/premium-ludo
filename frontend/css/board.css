@@ -45,12 +45,30 @@
   border: 2px solid rgba(255,255,255,0.85);
   box-shadow: 0 6px 0 rgba(0,0,0,0.45);
   transform: translate(-50%, -50%);
-  transition: transform .2s ease, left .2s ease, top .2s ease;
+  transition: transform .2s ease, left .25s ease, top .25s ease;
   display: grid;
   place-items: center;
   font-weight: 800;
   color: rgba(255,255,255,0.9);
   font-size: 14px;
+}
+
+.token.move-anim {
+  animation: tokenBounce .45s ease;
+}
+@keyframes tokenBounce {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  40% { transform: translate(-50%, -60%) scale(1.25); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.dice.rolling {
+  animation: diceRoll .55s ease;
+}
+@keyframes diceRoll {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
 }
 
 .token.red { background: #ef4444; }

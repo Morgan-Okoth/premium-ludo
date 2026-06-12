@@ -5,7 +5,4 @@ class ThreeDDice {
     container.textContent = '🎲';
   }
 }
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ThreeDDice;
-}
+window.ThreeDDice = ThreeDDice;
