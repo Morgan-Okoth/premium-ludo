@@ -1,0 +1,109 @@
+.board-wrap {
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.board {
+  --cell: 34px;
+  --gap: 5px;
+  --size: 15;
+  display: grid;
+  grid-template-columns: repeat(var(--size), var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+  background: #1f2a3d;
+  border: 2px solid #334155;
+  border-radius: 14px;
+  padding: var(--gap);
+  position: relative;
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 8px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  position: relative;
+}
+
+.token {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.85);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.45);
+  transform: translate(-50%, -50%);
+  transition: transform .2s ease, left .2s ease, top .2s ease;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+}
+
+.token.red { background: #ef4444; }
+.token.green { background: #10b981; }
+.token.yellow { background: #f59e0b; }
+.token.blue { background: #6366f1; }
+.token.violet { background: #8b5cf6; }
+.token.teal { background: #14b8a6; }
+
+.sidebar {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.rank-list {
+  list-style: decimal;
+  padding-left: 18px;
+}
+.rank-list li {
+  padding: 6px 8px;
+  background: #152540;
+  border: 1px solid #294266;
+  border-radius: 8px;
+  margin: 6px 0;
+}
+
+.controls {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.dice-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.dice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #0b1221;
+  border: 1px solid #294266;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 22px;
+  min-width: 70px;
+}
+
+.token.clickable { cursor: pointer; box-shadow: 0 0 0 4px #fff, 0 8px 0 rgba(0,0,0,0.5); }
+.token.valid { animation: pulse .9s infinite; }
+@keyframes pulse {
+  0%,100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.18); }
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.slot { background: #152540; border: 1px solid #294266; padding: 10px; border-radius: 10px; display: grid; gap: 8px; }
+.color-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid #fff; vertical-align: middle; margin-right: 6px; }

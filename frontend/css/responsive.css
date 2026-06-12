@@ -1,0 +1,12 @@
+@media (max-width: 960px) {
+  .main { grid-template-columns: 1fr !important; }
+  .sidebar { order: 2; }
+  .board-wrap { order: 1; }
+  .board { --cell: 28px; }
+}
+@media (max-width: 560px) {
+  .app-header h1 { font-size: 18px; }
+  .slots { grid-template-columns: 1fr; }
+  .board { --cell: 24px; --gap: 4px; }
+  .token { width: 22px; height: 22px; }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "premium-ludo",
+  "version": "1.0.0",
+  "description": "Premium Ludo Game with multiplayer, AI, premium features",
+  "scripts": {
+    "frontend": "cd frontend && npx serve -s -l 3000",
+    "backend": "cd backend && node server.js",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "lint": "eslint frontend/js/**/*.js backend/**/*.js",
+    "test": "node tests/run.js"
+  },
+  "keywords": ["ludo", "game", "premium", "multiplayer"],
+  "license": "MIT"
+}

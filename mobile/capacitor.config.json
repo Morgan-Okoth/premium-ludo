@@ -1,0 +1,6 @@
+export default {
+  appId: 'com.premium.ludo',
+  appName: 'Premium Ludo',
+  webDir: 'frontend',
+  server: { androidScheme: 'https' },
+};

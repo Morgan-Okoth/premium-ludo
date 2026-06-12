@@ -1,0 +1,15 @@
+.btn { background: #22c55e; color: #032a18; border: none; padding: 10px 12px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.btn.ghost { background: #152540; color: #edf2ff; border: 1px solid #294266; }
+.app-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #111d38; border-bottom: 1px solid #294266; }
+.main.hidden, .lobby.hidden, .dashboard.hidden, .game.hidden { display: none !important; }
+.setup { background: #111d38; border: 1px solid #294266; padding: 14px; border-radius: 14px; }
+.setup label { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+.slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0; }
+.slot { background: #152540; border: 1px solid #294266; padding: 10px; border-radius: 10px; display: grid; gap: 8px; }
+.turn-banner { padding: 10px; border-radius: 10px; background: #152540; border: 1px solid #294266; }
+.rank-list { list-style: decimal; padding-left: 18px; }
+.rank-list li { padding: 6px 8px; background: #152540; border: 1px solid #294266; border-radius: 8px; margin: 6px 0; }
+.sidebar { display: grid; gap: 10px; }
+.board-wrap { overflow: auto; display: flex; justify-content: center; }
+.turn-banner { display: flex; align-items: center; gap: 10px; }
+.turn-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }

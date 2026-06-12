@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Ludo - Game</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/board.css" />
+  <link rel="stylesheet" href="css/premium.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>Premium Ludo</h1>
+      <nav class="nav-actions">
+        <button id="quitBtn" class="btn ghost">Quit</button>
+      </nav>
+    </header>
+
+    <main id="main" class="main">
+      <section class="board-wrap" id="boardWrap"></section>
+      <section class="sidebar">
+        <div class="panel">
+          <h3>Status</h3>
+          <div id="statusLine">Initializing...</div>
+        </div>
+        <div class="panel">
+          <h3>Turn</h3>
+          <div class="turn-banner" id="turnBanner">—</div>
+        </div>
+        <div class="panel">
+          <h3>Controls</h3>
+          <div class="dice-wrap">
+            <div class="dice" id="dice">-</div>
+            <button id="rollBtn" class="btn primary">Roll Dice</button>
+          </div>
+          <div class="controls">
+            <button id="saveBtn" class="btn ghost">Save</button>
+            <button id="resetBtn" class="btn ghost">Reset</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/models/Player.js"></script>
+  <script src="js/models/Token.js"></script>
+  <script src="js/models/Dice.js"></script>
+  <script src="js/boards/PathGenerator.js"></script>
+  <script src="js/boards/BoardManager.js"></script>
+  <script src="js/core/GameEngine.js"></script>
+  <script src="js/core/MovementEngine.js"></script>
+  <script src="js/core/CaptureEngine.js"></script>
+  <script src="js/core/VictoryEngine.js"></script>
+  <script src="js/core/SaveManager.js"></script>
+  <script src="js/core/Statistics.js"></script>
+  <script src="js/core/Tournament.js"></script>
+  <script src="js/core/Achievements.js"></script>
+  <script src="js/ai/BaseAI.js"></script>
+  <script src="js/ai/EasyBot.js"></script>
+  <script src="js/ai/MediumBot.js"></script>
+  <script src="js/ai/ExpertBot.js"></script>
+  <script src="js/ai/AIManager.js"></script>
+  <script src="js/premium/BattlePass.js"></script>
+  <script src="js/premium/DailyMissions.js"></script>
+  <script src="js/premium/XPSystem.js"></script>
+  <script src="js/premium/Store.js"></script>
+  <script src="js/effects/Fireworks.js"></script>
+  <script src="js/effects/Particles.js"></script>
+  <script src="js/effects/DiceAnimation.js"></script>
+  <script src="js/effects/ThreeDDice.js"></script>
+  <script src="js/game.local.js"></script>
+</body>
+</html>
