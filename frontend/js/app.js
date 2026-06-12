@@ -52,9 +52,18 @@
       return;
     }
 
+    const totalTarget = 6;
+    while (players.length < totalTarget) {
+      players.push({
+        name: `Bot ${players.length + 1}`,
+        color: palette[players.length],
+        isBot: true,
+      });
+    }
+
     const setup = {
       players,
-      board: count <= 4 ? 'classic' : 'hex',
+      board: players.length <= 4 ? 'classic' : 'hex',
       mode,
     };
 

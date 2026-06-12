@@ -4,10 +4,17 @@
   justify-content: center;
 }
 
-.board {
-  --cell: 34px;
-  --gap: 5px;
+.board.classic {
   --size: 15;
+  --cell: 32px;
+  --gap: 5px;
+}
+
+.board.hex {
+  --size: 15;
+  --cell: 30px;
+  --gap: 4px;
+}
   display: grid;
   grid-template-columns: repeat(var(--size), var(--cell));
   grid-auto-rows: var(--cell);

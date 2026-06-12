@@ -11,11 +11,7 @@
   const diceEl = document.getElementById('dice');
   const rollBtn = document.getElementById('rollBtn');
 
-  const engine = new GameEngine(setup.players.length, setup.players.map((p, i) => ({ ...p, id: `player-${i}` })));
-  for (const p of engine.players) {
-    p.tokens = (p.tokens || []).map((t) => ({ ...t, color: p.color, owner: p.name }));
-  }
-
+  const engine = new GameEngine(setup.players.length, setup.players, setup.board);
   const aiManager = new AIManager();
   let validTokenIndex = -1;
 
@@ -26,6 +22,24 @@
   function setTurn() {
     const p = engine.players[engine.currentPlayer];
     turnBanner.innerHTML = `<span class="turn-dot" style="background:${p.color}"></span> ${p.name}`;
+  }
+
+  function renderBoard() {
+    boardWrap.innerHTML = '';
+    const board = document.createElement('div');
+    board.className = `board ${setup.board === 'hex' ? 'hex' : 'classic'}`;
+    board.style.setProperty('--size', setup.board === 'hex' ? '15' : '15');
+    const size = setup.board === 'hex' ? 15 : 15;
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        board.appendChild(cell);
+      }
+    }
+    boardWrap.appendChild(board);
   }
 
   function cellFor(r, c) {

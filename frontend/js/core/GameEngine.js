@@ -1,8 +1,14 @@
 class GameEngine {
-  constructor(playerCount = 4, names = null) {
+  constructor(playerCount = 4, names = null, mode = 'classic') {
     this.sides = playerCount;
-    this.colors = ['red', 'green', 'yellow', 'blue'];
-    this.players = names ? names.map((name, i) => ({ name, color: this.colors[i], ai: false })) : this.colors.map((color, i) => ({ name: color, color, ai: false }));
+    this.mode = mode;
+    this.colors = mode === 'hex'
+      ? ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+      : ['red', 'green', 'yellow', 'blue'];
+    this.players = names
+      ? names.map((name, i) => ({ name, color: this.colors[i], ai: false }))
+      : this.colors.map((color, i) => ({ name: color, color, ai: false }));
+  }
 
     this.paths = {};
     this.homeColumns = {};
