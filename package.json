@@ -7,7 +7,8 @@
     "backend": "cd backend && node server.js",
     "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
     "lint": "eslint frontend/js/**/*.js backend/**/*.js",
-    "test": "node tests/run.js"
+    "test": "node tests/run.js",
+    "netlify-build": "echo 'Static frontend ready'"
   },
   "keywords": ["ludo", "game", "premium", "multiplayer"],
   "license": "MIT"
