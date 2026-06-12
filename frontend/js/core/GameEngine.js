@@ -11,6 +11,7 @@ class GameEngine {
 
     this.paths = {};
     this.homeColumns = {};
+    this.pathGenerator = new PathGenerator();
     this.currentPlayer = 0;
     this.diceValue = null;
     this.turnPhase = 'roll';
@@ -33,70 +34,42 @@ class GameEngine {
   }
 
   generatePath(color) {
-    const track = {
-      red: [
-        { r: 6, c: 0 }, { r: 6, c: 1 },
-        { r: 5, c: 1 }, { r: 4, c: 1 }, { r: 3, c: 1 }, { r: 2, c: 1 }, { r: 1, c: 1 },
-        { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 6 },
-        { r: 0, c: 6 }, { r: 0, c: 7 },
-        { r: 0, c: 8 }, { r: 1, c: 8 }, { r: 2, c: 8 }, { r: 3, c: 8 }, { r: 4, c: 8 }, { r: 5, c: 8 }, { r: 6, c: 8 },
-        { r: 6, c: 9 }, { r: 6, c: 10 }, { r: 6, c: 11 }, { r: 6, c: 12 }, { r: 6, c: 13 },
-        { r: 7, c: 13 }, { r: 8, c: 13 },
-        { r: 8, c: 12 }, { r: 8, c: 11 }, { r: 8, c: 10 }, { r: 8, c: 9 }, { r: 8, c: 8 },
-        { r: 9, c: 8 }, { r: 10, c: 8 }, { r: 11, c: 8 }, { r: 12, c: 8 }, { r: 13, c: 8 },
-        { r: 13, c: 7 }, { r: 14, c: 7 },
-        { r: 14, c: 6 }, { r: 13, c: 6 }, { r: 12, c: 6 }, { r: 11, c: 6 }, { r: 10, c: 6 }, { r: 9, c: 6 }, { r: 8, c: 6 },
-        { r: 8, c: 5 }, { r: 8, c: 4 }, { r: 8, c: 3 }, { r: 8, c: 2 }, { r: 8, c: 1 },
-        { r: 7, c: 1 },
-      ],
-      green: [
-        { r: 1, c: 6 }, { r: 1, c: 7 },
-        { r: 2, c: 7 }, { r: 3, c: 7 }, { r: 4, c: 7 }, { r: 5, c: 7 }, { r: 6, c: 7 },
-        { r: 6, c: 8 }, { r: 6, c: 9 }, { r: 6, c: 10 }, { r: 6, c: 11 }, { r: 6, c: 12 },
-        { r: 7, c: 12 }, { r: 7, c: 13 },
-        { r: 8, c: 13 }, { r: 9, c: 13 }, { r: 10, c: 13 }, { r: 11, c: 13 }, { r: 12, c: 13 }, { r: 13, c: 13 },
-        { r: 13, c: 12 }, { r: 13, c: 11 }, { r: 13, c: 10 }, { r: 13, c: 9 }, { r: 13, c: 8 },
-        { r: 14, c: 8 }, { r: 14, c: 7 },
-        { r: 14, c: 6 }, { r: 13, c: 6 }, { r: 12, c: 6 }, { r: 11, c: 6 }, { r: 10, c: 6 }, { r: 9, c: 6 }, { r: 8, c: 6 },
-        { r: 8, c: 5 }, { r: 8, c: 4 }, { r: 8, c: 3 }, { r: 8, c: 2 }, { r: 8, c: 1 },
-        { r: 7, c: 1 }, { r: 6, c: 1 },
-        { r: 6, c: 0 }, { r: 5, c: 0 }, { r: 4, c: 0 }, { r: 3, c: 0 }, { r: 2, c: 0 }, { r: 1, c: 0 },
-        { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 },
-      ],
-      yellow: [
-        { r: 13, c: 8 }, { r: 13, c: 7 },
-        { r: 12, c: 7 }, { r: 11, c: 7 }, { r: 10, c: 7 }, { r: 9, c: 7 }, { r: 8, c: 7 },
-        { r: 8, c: 6 }, { r: 8, c: 5 }, { r: 8, c: 4 }, { r: 8, c: 3 }, { r: 8, c: 2 },
-        { r: 7, c: 2 }, { r: 7, c: 1 },
-        { r: 6, c: 1 }, { r: 5, c: 1 }, { r: 4, c: 1 }, { r: 3, c: 1 }, { r: 2, c: 1 }, { r: 1, c: 1 },
-        { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 }, { r: 1, c: 6 },
-        { r: 0, c: 6 }, { r: 0, c: 7 },
-        { r: 0, c: 8 }, { r: 1, c: 8 }, { r: 2, c: 8 }, { r: 3, c: 8 }, { r: 4, c: 8 }, { r: 5, c: 8 }, { r: 6, c: 8 },
-        { r: 6, c: 9 }, { r: 6, c: 10 }, { r: 6, c: 11 }, { r: 6, c: 12 }, { r: 6, c: 13 },
-        { r: 7, c: 13 }, { r: 8, c: 13 },
-        { r: 9, c: 13 }, { r: 10, c: 13 }, { r: 11, c: 13 }, { r: 12, c: 13 }, { r: 13, c: 13 },
-        { r: 13, c: 12 }, { r: 13, c: 11 }, { r: 13, c: 10 }, { r: 13, c: 9 },
-      ],
-      blue: [
-        { r: 8, c: 13 }, { r: 8, c: 12 },
-        { r: 9, c: 12 }, { r: 10, c: 12 }, { r: 11, c: 12 }, { r: 12, c: 12 }, { r: 13, c: 12 },
-        { r: 13, c: 11 }, { r: 13, c: 10 }, { r: 13, c: 9 }, { r: 13, c: 8 }, { r: 13, c: 7 },
-        { r: 13, c: 6 }, { r: 14, c: 6 },
-        { r: 14, c: 6 }, { r: 13, c: 6 }, { r: 12, c: 6 }, { r: 11, c: 6 }, { r: 10, c: 6 }, { r: 9, c: 6 }, { r: 8, c: 6 },
-        { r: 8, c: 5 }, { r: 8, c: 4 }, { r: 8, c: 3 }, { r: 8, c: 2 }, { r: 8, c: 1 },
-        { r: 7, c: 1 }, { r: 6, c: 1 },
-        { r: 6, c: 0 }, { r: 5, c: 0 }, { r: 4, c: 0 }, { r: 3, c: 0 }, { r: 2, c: 0 }, { r: 1, c: 0 },
-        { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 }, { r: 1, c: 5 },
-        { r: 0, c: 5 }, { r: 0, c: 6 },
-        { r: 0, c: 7 }, { r: 1, c: 7 }, { r: 2, c: 7 }, { r: 3, c: 7 }, { r: 4, c: 7 }, { r: 5, c: 7 }, { r: 6, c: 7 },
-        { r: 6, c: 8 }, { r: 6, c: 9 }, { r: 6, c: 10 }, { r: 6, c: 11 }, { r: 6, c: 12 },
-      ],
+    if (this.mode === 'hex') return this.pathGenerator.getHexPath(color);
+    return this.pathGenerator.getClassicPath(color);
+  }
+
+  generateHomeColumn(color) {
+    if (this.mode === 'hex') return this.pathGenerator.generateHomeLane(color);
+    const dirs = {
+      red:    { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
+      green:  { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
+      yellow: { start: { r: 8, c: 13 }, step: (p) => ({ ...p, c: p.c - 1 }) },
+      blue:   { start: { r: 13, c: 8 }, step: (p) => ({ ...p, r: p.r - 1 }) },
+      orange: { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
+      purple: { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
     };
 
-    if (track[color]) return track[color];
+    const cfg = dirs[color] || dirs.red;
+    const cells = [];
+    let cur = { ...cfg.start };
+    for (let i = 0; i < 5; i++) {
+      cells.push({ ...cur });
+      cur = cfg.step(cur);
+    }
+    return cells;
+  }
 
-    const base = track.red;
-    return base.map((p) => ({ ...p }));
+  isSafeSpot(pos) {
+    if (this.mode === 'hex') {
+      const safe = this.pathGenerator.generateSafeZones();
+      return safe.some((s) => s.q === pos.q && s.r === pos.r);
+    }
+    const safeSpots = [
+      { r: 6, c: 1 }, { r: 2, c: 1 }, { r: 6, c: 8 }, { r: 8, c: 8 },
+      { r: 13, c: 8 }, { r: 8, c: 13 }, { r: 1, c: 6 }, { r: 13, c: 6 },
+      { r: 7, c: 0 }, { r: 0, c: 7 }, { r: 7, c: 14 }, { r: 14, c: 7 },
+    ];
+    return safeSpots.some((s) => s.r === pos.r && s.c === pos.c);
   }
 
   generateHomeColumn(color) {

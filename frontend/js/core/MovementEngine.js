@@ -10,25 +10,85 @@ class MovementEngine {
     if (token.status === 'yard') return false;
 
     const path = this.game.paths[token.color];
-    const homePath = this.game.getHomeColumn(token.color);
+    const homePath = this.game.homeColumns[token.color];
     const current = token.pathIndex;
     const total = path.length + homePath.length - 1;
 
     return current + steps <= total;
   }
 
-  move(player, tokenIndex) {
+  canEnterHomeLane(player, tokenIndex) {
     const token = player.tokens[tokenIndex];
-    if (token.status === 'yard' && this.game.diceValue === 6) {
+    if (token.status !== 'onTrack') return false;
+    
+    const path = this.game.paths[token.color];
+    const homePath = this.game.homeColumns[token.color];
+    const homeEntry = homePath[0];
+    
+    const stepsNeeded = path.length - token.pathIndex;
+    return stepsNeeded <= path.length;
+  }
+
+  canFinishToken(player, tokenIndex) {
+    const token = player.tokens[tokenIndex];
+    if (token.status !== 'onTrack') return false;
+    
+    const path = this.game.paths[token.color];
+    const homePath = this.game.homeColumns[token.color];
+    const steps = token.pathIndex;
+    
+    const remainingToHome = path.length - steps;
+    const exactFinishRoll = remainingToHome + homePath.length - 1;
+    
+    return exactFinishRoll <= path.length + homePath.length - 1;
+  }
+
+  isOvershootMove(player, tokenIndex, steps) {
+    const token = player.tokens[tokenIndex];
+    if (token.status !== 'onTrack') return false;
+    
+    const path = this.game.paths[token.color];
+    const homePath = this.game.homeColumns[token.color];
+    const total = path.length + homePath.length - 1;
+    const newIndex = token.pathIndex + steps;
+    
+    return newIndex > total;
+  }
+
+  move(player, tokenIndex, steps) {
+    const token = player.tokens[tokenIndex];
+    const effectiveSteps = steps !== undefined ? steps : this.game.diceValue;
+
+    if (token.status === 'yard' && effectiveSteps === 6) {
       return this.enterBoard(player, tokenIndex);
     }
-    if (token.status === 'home' && this.game.diceValue === 6) {
+    if (token.status === 'home' && effectiveSteps === 6) {
       return this.enterBoard(player, tokenIndex);
     }
     if (token.status === 'onTrack') {
-      return this.advance(player, tokenIndex);
+      return this.advance(player, tokenIndex, effectiveSteps);
     }
     return null;
+  }
+
+  animateMove(player, tokenIndex, onComplete) {
+    const token = player.tokens[tokenIndex];
+    const cell = document.querySelector(`.cell[data-r="${token.r}"][data-c="${token.c}"]`);
+    if (!cell) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    const tokenEl = cell.querySelector(`.token.${token.color}`);
+    if (tokenEl) {
+      tokenEl.classList.add('move-anim');
+      setTimeout(() => {
+        tokenEl.classList.remove('move-anim');
+        if (onComplete) onComplete();
+      }, 500);
+    } else {
+      if (onComplete) onComplete();
+    }
   }
 
   enterBoard(player, tokenIndex) {
@@ -43,11 +103,10 @@ class MovementEngine {
     return { token, state, captured };
   }
 
-  advance(player, tokenIndex) {
+  advance(player, tokenIndex, steps) {
     const token = player.tokens[tokenIndex];
-    const steps = this.game.diceValue;
     const path = this.game.paths[token.color];
-    const homePath = this.game.getHomeColumn(token.color);
+    const homePath = this.game.homeColumns[token.color];
     const newIndex = token.pathIndex + steps;
 
     if (newIndex >= path.length) {
