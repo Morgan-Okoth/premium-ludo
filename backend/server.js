@@ -7,10 +7,18 @@ import { connect } from './database/mongo.js';
 import routes from './routes/index.route.js';
 import { gameSocket } from './socket/gameSocket.js';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.use(express.json());
-app.use(process.env.BASE_PATH || '/', routes);
+app.use('/api', routes);
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
 
 const server = http.createServer(app);
 const io = new Server(server, {
