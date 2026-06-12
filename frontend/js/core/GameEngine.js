@@ -24,11 +24,9 @@ class GameEngine {
   }
 
   initPaths() {
-    const palette = this.colors;
     this.paths = {};
     this.homeColumns = {};
-
-    for (const color of palette) {
+    for (const color of this.colors) {
       this.paths[color] = this.generatePath(color);
       this.homeColumns[color] = this.generateHomeColumn(color);
     }
@@ -97,7 +95,7 @@ class GameEngine {
 
     if (track[color]) return track[color];
 
-    const base = this.paths['red'] || track.red;
+    const base = track.red;
     return base.map((p) => ({ ...p }));
   }
 
@@ -105,12 +103,13 @@ class GameEngine {
     const dirs = {
       red:    { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
       green:  { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
-      yellow: { start: { r: -7, c: 13 }, step: (p) => ({ ...p, c: p.c - 1 }) },
-      blue:   { start: { r: 13, c: -7 }, step: (p) => ({ ...p, r: p.r - 1 }) },
+      yellow: { start: { r: 8, c: 13 }, step: (p) => ({ ...p, c: p.c - 1 }) },
+      blue:   { start: { r: 13, c: 8 }, step: (p) => ({ ...p, r: p.r - 1 }) },
+      orange: { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
+      purple: { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
     };
 
-    const fallback = dirs['red'];
-    const cfg = dirs[color] || fallback;
+    const cfg = dirs[color] || dirs.red;
     const cells = [];
     let cur = { ...cfg.start };
     for (let i = 0; i < 5; i++) {
@@ -134,10 +133,9 @@ class GameEngine {
 
   getMovableTokens(player) {
     const tokens = player.tokens || [];
-    return tokens.filter((token, idx) => {
+    return tokens.filter((token) => {
       if (token.status === 'finished') return false;
-      if (token.status === 'yard') return this.diceValue === 6;
-      if (token.status === 'home') return this.diceValue === 6;
+      if (token.status === 'yard' || token.status === 'home') return this.diceValue === 6;
       return this.pathIndexWithinBounds(token, this.diceValue);
     });
   }
@@ -198,7 +196,7 @@ class GameEngine {
           token.r = pos.r;
           token.c = pos.c;
           const captured = this.checkCapture(player, token);
-          const extraTurn = this.isHomeEntryExtraTurn(token, homeIndex, homeLen);
+          const extraTurn = false;
           this.finishTurn(player, extraTurn);
           return { token, r: token.r, c: token.c, captured: captured || false, extraTurn };
         } else if (homeIndex === homeLen - 1) {
@@ -227,10 +225,6 @@ class GameEngine {
     }
 
     return null;
-  }
-
-  isHomeEntryExtraTurn(token, homeIndex, homeLen) {
-    return false;
   }
 
   checkCapture(player, token) {
@@ -311,8 +305,7 @@ class GameEngine {
     this.captures = {};
     this.moveCounts = {};
     this.players.forEach((p) => {
-      const count = 4;
-      p.tokens = Array.from({ length: count }, (_, i) => ({
+      p.tokens = Array.from({ length: 4 }, (_, i) => ({
         id: `${p.color}-${i}`,
         color: p.color,
         status: 'yard',
@@ -326,15 +319,12 @@ class GameEngine {
   }
 
   validate() {
-    const valid = this.players.every((p, i) => {
+    return this.players.every((p, i) => {
       if (this.winner) return true;
       const movable = this.getMovableTokens(p);
-      if (movable.length === 0 && this.currentPlayer === i) {
-        return true;
-      }
+      if (movable.length === 0 && this.currentPlayer === i) return true;
       return true;
     });
-    return valid;
   }
 }
 
