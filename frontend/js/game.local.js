@@ -33,11 +33,25 @@
     placeTokens(board, engine.players);
   }
 
+  function animateDice() {
+    if (typeof DiceAnimation !== 'undefined' && DiceAnimation.roll) DiceAnimation.roll(diceEl);
+    else diceEl.classList.add('rolling');
+    setTimeout(() => diceEl.classList.remove('rolling'), 600);
+  }
+
   function afterMove() {
     placeTokens(board, engine.players);
     if (engine.checkWinCondition(engine.players[engine.currentPlayer])) {
       setStatus(`${engine.players[engine.currentPlayer].name} wins!`);
       rollBtn.disabled = true;
+      if (typeof Particles !== 'undefined' && Particles.emit) Particles.emit(document.body);
+      else {
+        const el = document.createElement('div');
+        el.className = 'fx-particles';
+        el.textContent = '✨';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 900);
+      }
       return;
     }
     setTurn();
@@ -61,6 +75,7 @@
     engine.diceValue = dice;
     engine.turnPhase = 'move';
     diceEl.textContent = dice;
+    animateDice();
     setStatus(`${p.name} rolled ${dice}`);
     setTimeout(() => {
       const choice = aiManager.pick('medium', engine.getState());
@@ -76,6 +91,7 @@
     const dice = Math.floor(Math.random() * 6) + 1;
     engine.rollDie();
     diceEl.textContent = dice;
+    animateDice();
     setStatus(`${p.name} rolled ${dice}`);
     const movable = (p.tokens || []).findIndex((t) => t.status === 'onTrack' || t.status === 'homeColumn');
     if (movable < 0) {
@@ -114,4 +130,5 @@
   refreshBoard();
   setTurn();
   setStatus('Roll to start');
+  if (typeof startOrbit === 'function') startOrbit();
 })();
