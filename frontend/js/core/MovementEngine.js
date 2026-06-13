@@ -73,12 +73,15 @@ class MovementEngine {
 
   animateMove(player, tokenIndex, onComplete) {
     const token = player.tokens[tokenIndex];
+    if (typeof document === 'undefined') {
+      if (onComplete) onComplete();
+      return;
+    }
     const cell = document.querySelector(`.cell[data-r="${token.r}"][data-c="${token.c}"]`);
     if (!cell) {
       if (onComplete) onComplete();
       return;
     }
-
     const tokenEl = cell.querySelector(`.token.${token.color}`);
     if (tokenEl) {
       tokenEl.classList.add('move-anim');
