@@ -154,7 +154,7 @@ function renderHex(board, wrap) {
 }
 
 window.placeTokens = function(board, players) {
-  document.querySelectorAll('.token').forEach(n => n.remove());
+  document.querySelectorAll('.cell .token').forEach(n => n.remove());
   players.forEach(player => {
     (player.tokens || []).forEach(token => {
       if (!token || token.status === 'yard' || token.status === 'finished') return;

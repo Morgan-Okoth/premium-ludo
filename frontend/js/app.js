@@ -53,9 +53,11 @@
     }
 
     while (players.length < 6) {
+      const idx = players.length;
+      if (!palette[idx]) break;
       players.push({
         name: `Bot ${players.length + 1}`,
-        color: palette[players.length],
+        color: palette[idx],
         isBot: true,
       });
     }

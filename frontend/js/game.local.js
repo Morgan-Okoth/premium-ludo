@@ -29,8 +29,10 @@
   }
 
   function refreshBoard() {
-    render(board, boardWrap);
-    placeTokens(board, engine.players);
+    if (typeof window.renderBoard === 'function') window.renderBoard(board, boardWrap);
+    else if (typeof render === 'function') render(board, boardWrap);
+    if (typeof window.placeTokens === 'function') window.placeTokens(board, engine.players);
+    else if (typeof placeTokens === 'function') placeTokens(board, engine.players);
   }
 
   function animateDice() {

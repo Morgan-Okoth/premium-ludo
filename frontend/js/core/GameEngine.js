@@ -34,62 +34,20 @@ class GameEngine {
   }
 
   generatePath(color) {
-    if (this.mode === 'hex') return this.pathGenerator.getHexPath(color);
-    return this.pathGenerator.getClassicPath(color);
+    return this.pathGenerator.getPath(color, this.mode);
   }
 
   generateHomeColumn(color) {
-    if (this.mode === 'hex') return this.pathGenerator.generateHomeLane(color);
-    const dirs = {
-      red:    { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
-      green:  { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
-      yellow: { start: { r: 8, c: 13 }, step: (p) => ({ ...p, c: p.c - 1 }) },
-      blue:   { start: { r: 13, c: 8 }, step: (p) => ({ ...p, r: p.r - 1 }) },
-      orange: { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
-      purple: { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
-    };
-
-    const cfg = dirs[color] || dirs.red;
-    const cells = [];
-    let cur = { ...cfg.start };
-    for (let i = 0; i < 5; i++) {
-      cells.push({ ...cur });
-      cur = cfg.step(cur);
-    }
-    return cells;
+    return this.pathGenerator.getHomeLane(color, this.mode);
   }
 
   isSafeSpot(pos) {
+    const safeCells = this.pathGenerator.getSafeCells(this.mode);
+    if (!pos) return false;
     if (this.mode === 'hex') {
-      const safe = this.pathGenerator.generateSafeZones();
-      return safe.some((s) => s.q === pos.q && s.r === pos.r);
+      return safeCells.some((s) => s.q === pos.q && s.r === pos.r);
     }
-    const safeSpots = [
-      { r: 6, c: 1 }, { r: 2, c: 1 }, { r: 6, c: 8 }, { r: 8, c: 8 },
-      { r: 13, c: 8 }, { r: 8, c: 13 }, { r: 1, c: 6 }, { r: 13, c: 6 },
-      { r: 7, c: 0 }, { r: 0, c: 7 }, { r: 7, c: 14 }, { r: 14, c: 7 },
-    ];
-    return safeSpots.some((s) => s.r === pos.r && s.c === pos.c);
-  }
-
-  generateHomeColumn(color) {
-    const dirs = {
-      red:    { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
-      green:  { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
-      yellow: { start: { r: 8, c: 13 }, step: (p) => ({ ...p, c: p.c - 1 }) },
-      blue:   { start: { r: 13, c: 8 }, step: (p) => ({ ...p, r: p.r - 1 }) },
-      orange: { start: { r: 6, c: 1 }, step: (p) => ({ ...p, c: p.c + 1 }) },
-      purple: { start: { r: 1, c: 6 }, step: (p) => ({ ...p, r: p.r + 1 }) },
-    };
-
-    const cfg = dirs[color] || dirs.red;
-    const cells = [];
-    let cur = { ...cfg.start };
-    for (let i = 0; i < 5; i++) {
-      cells.push({ ...cur });
-      cur = cfg.step(cur);
-    }
-    return cells;
+    return safeCells.some((s) => s.r === pos.r && s.c === pos.c);
   }
 
   rollDie() {
@@ -166,8 +124,13 @@ class GameEngine {
           token.status = 'homeColumn';
           token.homeColumnIndex = homeIndex;
           const pos = homePath[homeIndex] || { r: 0, c: 0 };
-          token.r = pos.r;
-          token.c = pos.c;
+          if (this.mode === 'hex' && pos.q !== undefined && pos.r !== undefined) {
+            token.r = pos.q;
+            token.c = pos.r;
+          } else {
+            token.r = pos.r;
+            token.c = pos.c;
+          }
           const captured = this.checkCapture(player, token);
           const extraTurn = false;
           this.finishTurn(player, extraTurn);
@@ -176,8 +139,13 @@ class GameEngine {
           token.status = 'finished';
           token.pathIndex = newIndex;
           const pos = homePath[homeIndex] || { r: 0, c: 0 };
-          token.r = pos.r;
-          token.c = pos.c;
+          if (this.mode === 'hex' && pos.q !== undefined && pos.r !== undefined) {
+            token.r = pos.q;
+            token.c = pos.r;
+          } else {
+            token.r = pos.r;
+            token.c = pos.c;
+          }
           this.moveCounts[player.color] = (this.moveCounts[player.color] || 0) + 1;
           const extraTurn = this.checkWinCondition(player);
           this.finishTurn(player, extraTurn);
@@ -202,6 +170,7 @@ class GameEngine {
 
   checkCapture(player, token) {
     const pos = { r: token.r, c: token.c };
+    if (!pos) return false;
     if (this.isSafeSpot(pos)) return false;
 
     for (const otherPlayer of this.players) {
@@ -242,15 +211,6 @@ class GameEngine {
     this.currentPlayer = (this.currentPlayer + 1) % this.sides;
     this.diceValue = null;
     this.turnPhase = 'roll';
-  }
-
-  isSafeSpot(pos) {
-    const safeSpots = [
-      { r: 6, c: 1 }, { r: 2, c: 1 }, { r: 6, c: 8 }, { r: 8, c: 8 },
-      { r: 13, c: 8 }, { r: 8, c: 13 }, { r: 1, c: 6 }, { r: 13, c: 6 },
-      { r: 7, c: 0 }, { r: 0, c: 7 }, { r: 7, c: 14 }, { r: 14, c: 7 },
-    ];
-    return safeSpots.some((s) => s.r === pos.r && s.c === pos.c);
   }
 
   getState() {
