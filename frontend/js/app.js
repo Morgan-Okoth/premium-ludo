@@ -5,7 +5,7 @@
   const startBtn = document.getElementById('startBtn');
 
   const classicColors = ['red', 'green', 'yellow', 'blue'];
-  const hexColors = ['red', 'green', 'yellow', 'blue', 'orange', 'purple'];
+  const hexColors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
 
   function renderSlots() {
     const count = Number(countSel.value);

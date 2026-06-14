@@ -8,10 +8,19 @@
   const diceEl = document.getElementById('dice');
   const rollBtn = document.getElementById('rollBtn');
 
-  const engine = new GameEngine(setup.players.length, setup.players.map((p, i) => ({ ...p, id: `player-${i}` })));
-  for (const p of engine.players) {
-    p.tokens = (p.tokens || []).map((t, idx) => ({ ...t, color: p.color, owner: p.name, homeIndex: idx }));
-  }
+  const engine = new GameEngine(setup.players.length, null, setup.board);
+
+  const names = setup.players.map((p, i) => {
+    const raw = p && p.name;
+    if (typeof raw === 'string' && raw.trim().length > 0) return raw.trim();
+    return `Player ${i + 1}`;
+  });
+
+  engine.players.forEach((p, i) => {
+    p.name = names[i] || p.name;
+    p.isBot = !!(setup.players[i] && setup.players[i].isBot);
+    p.tokens = [0,1,2,3].map(n => ({ id: `${p.color}-${n}`, color: p.color, status: 'yard', pathIndex: null, r: null, c: null, homeColumnIndex: null, homeIndex: n }));
+  });
 
   const aiManager = new AIManager();
   let validTokenIndex = -1;
@@ -113,8 +122,8 @@
   document.getElementById('resetBtn').addEventListener('click', () => {
     engine.reset();
     engine.players.forEach((p, i) => {
-      p.name = setup.players[i]?.name || p.name;
-      p.isBot = setup.players[i]?.isBot || false;
+      p.name = names[i] || p.name || `Player ${i + 1}`;
+      p.isBot = !!(setup.players[i] && setup.players[i].isBot);
     });
     validTokenIndex = -1;
     rollBtn.disabled = false;
